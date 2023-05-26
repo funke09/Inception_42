@@ -1,37 +1,74 @@
-version: '3.3'
-services:
-  ngnix:
-    build: ./nginx/
-    restart: always
-    volumes:
-      - /home/zcherrad/data/nginx:/usr/share/nginx/html
-    networks:
-      - my_network
-    ports:
-      - 443:433
+version: '3'
 
+services:
   mariadb:
-    build: ./mariadb/
-    restart: always
-    environment:
-      - MYSQL_ROOT_PASSWORD=mysecretpassword
+    build:
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
+    image: mariadb
+    container_name: mariadb
     volumes:
-      - /home/zcherrad/data/mariadb:/var/lib/mysql
+      - mariadb:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     networks:
-      - my_network
+      - inception
+    restart: always
+
+  nginx:
+    build:
+      context: ./requirements/nginx
+      dockerfile: Dockerfile
+    image: nginx
+    container_name: nginx
+    depends_on:
+      - wordpress
+    ports:
+      - "443:443"
+    networks:
+      - inception
+    volumes:
+      - ./requirements/nginx/conf/nginx.conf:/etc/nginx/sites-available/default
+      - ./requirements/tools:/etc/nginx/ssl/
+      - wordpress:/var/www/
+    restart: always
 
   wordpress:
-    build: ./wordpress/
-    restart: always
+    build:
+      context: ./requirements/wordpress
+      dockerfile: Dockerfile
+      args:
+        MYSQL_DATABASE: ${MYSQL_DATABASE}
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+        MYSQL_USER: ${MYSQL_USER}
+        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    image: wordpress
+    container_name: wordpress
+    depends_on:
+      - mariadb
     volumes:
-      - /home/zcherrad/data/wordpress:/var/www/html
-    environment:
-      - WORDPRESS_DB_HOST=mariadb
-      - WORDPRESS_DB_USER=root
-      - WORDPRESS_DB_PASSWORD=mysecretpassword
-      - WORDPRESS_DB_NAME=mywordpressdb
+      - wordpress:/var/www/
     networks:
-      - my_network
+      - inception
+    restart: always
+
+volumes:
+  wordpress:
+    driver_opts:
+      type: none
+      device: /home/${USER}/data/wordpress
+      o: bind
+
+  mariadb:
+    driver_opts:
+      type: none
+      device: /home/${USER}/data/mariadb
+      o: bind
+
 
 networks:
-  my_network:
+  inception:
+    driver: bridge 
