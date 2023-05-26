@@ -16,7 +16,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     networks:
       - inception
-    restart: always
+    restart: on-failure
 
   nginx:
     build:
@@ -34,7 +34,7 @@ services:
       - ./requirements/nginx/conf/nginx.conf:/etc/nginx/sites-available/default
       - ./requirements/tools:/etc/nginx/ssl/
       - wordpress:/var/www/
-    restart: always
+    restart: on-failure
 
   wordpress:
     build:
@@ -53,19 +53,19 @@ services:
       - wordpress:/var/www/
     networks:
       - inception
-    restart: always
+    restart: on-failure
 
 volumes:
   wordpress:
     driver_opts:
       type: none
-      device: /home/${USER}/data/wordpress
+      device: /home/zcherrad/data/wordpress
       o: bind
 
   mariadb:
     driver_opts:
       type: none
-      device: /home/${USER}/data/mariadb
+      device: /home/zcherrad/data/mariadb
       o: bind
 
 
