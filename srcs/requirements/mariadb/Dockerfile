@@ -1,4 +1,5 @@
 FROM debian:buster
+RUN apt-get autoclean
 RUN apt-get update -y 
 RUN apt-get install -y mariadb-server mariadb-client
 RUN mkdir -p /var/run/mysqld && chown -R mysql /var/run/mysqld && chmod -R 777 /var/run/mysqld
