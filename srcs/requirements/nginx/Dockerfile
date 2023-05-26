@@ -1,6 +1,6 @@
 FROM debian:buster
-RUN apt update -y && apt upgrade -y
-RUN apt install -y nginx
+RUN apt-get update -y
+RUN apt-get install -y nginx
 RUN mkdir -p /etc/nginx/ssl/certs
 RUN mkdir -p /etc/nginx/ssl/private
 COPY ./tools/script.sh .
