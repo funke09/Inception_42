@@ -1,8 +1,7 @@
 NAME = inception
 
 all:
-	@mkdir -p /home/zcherrad/data/mariadb
-	@mkdir -p /home/zcherrad/data/wordpress
+	@sh ./srcs/requirements/tools/script.sh
 	@docker-compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env up -d --build
 
 build:
