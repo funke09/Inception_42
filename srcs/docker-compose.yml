@@ -1,23 +1,6 @@
 version: '3'
 
 services:
-  mariadb:
-    build:
-      context: ./requirements/mariadb
-      dockerfile: Dockerfile
-    image: mariadb
-    container_name: mariadb
-    volumes:
-      - mariadb:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    networks:
-      - inception
-    restart: on-failure
-
   nginx:
     build:
       context: ./requirements/nginx
@@ -31,10 +14,29 @@ services:
     networks:
       - inception
     volumes:
-      - ./requirements/nginx/conf/nginx.conf:/etc/nginx/sites-available/default
+      - ./requirements/nginx/conf/:/etc/nginx/http.d/
       - ./requirements/tools:/etc/nginx/ssl/
-      - wordpress:/var/www/
-    restart: on-failure
+      - wp-data:/var/www/
+    restart: always
+
+  mariadb:
+    build:
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
+    image: mariadb
+    container_name: mariadb
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - inception
+    restart: always
 
   wordpress:
     build:
@@ -49,26 +51,34 @@ services:
     container_name: wordpress
     depends_on:
       - mariadb
+    ports:
+      - "9000:9000"
     volumes:
-      - wordpress:/var/www/
+      - wp-data:/var/www/
     networks:
       - inception
-    restart: on-failure
+    restart: always
 
 volumes:
-  wordpress:
+  wp-data:
     driver_opts:
       o: bind
       type: none
       device: /home/${USER}/data/wordpress
 
-  mariadb:
+  db-data:
     driver_opts:
       o: bind
       type: none
       device: /home/${USER}/data/mariadb
 
+  portainer-data:
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/data/portainer
 
 networks:
   inception:
     driver: bridge 
+

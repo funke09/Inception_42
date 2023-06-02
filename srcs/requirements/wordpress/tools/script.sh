@@ -10,6 +10,8 @@ define( 'DB_COLLATE', '' );
 define('FS_METHOD','direct');
 \$table_prefix = 'wp_';
 define( 'WP_DEBUG', false );
+define( 'WP_REDIS_HOST', 'redis' );
+define( 'WP_REDIS_PORT', 6379 );
 define( 'WP_CACHE', true );
 if ( ! defined( 'ABSPATH' ) ) {
 define( 'ABSPATH', __DIR__ . '/' );}
