@@ -16,8 +16,8 @@ services:
     volumes:
       - ./requirements/nginx/conf/:/etc/nginx/http.d/
       - ./requirements/tools:/etc/nginx/ssl/
-      - wp-data:/var/www/
-    restart: always
+      - volume-wordpress:/var/www/
+    restart: on-failure
 
   mariadb:
     build:
@@ -26,7 +26,7 @@ services:
     image: mariadb
     container_name: mariadb
     volumes:
-      - db-data:/var/lib/mysql
+      - volume-mariadb:/var/lib/mysql
     ports:
       - "3306:3306"
     environment:
@@ -36,7 +36,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     networks:
       - inception
-    restart: always
+    restart: on-failure
 
   wordpress:
     build:
@@ -54,29 +54,23 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - wp-data:/var/www/
+      - volume-wordpress:/var/www/
     networks:
       - inception
-    restart: always
+    restart: on-failure
 
 volumes:
-  wp-data:
+  volume-wordpress:
     driver_opts:
       o: bind
       type: none
       device: /home/${USER}/data/wordpress
 
-  db-data:
+  volume-mariadb:
     driver_opts:
       o: bind
       type: none
       device: /home/${USER}/data/mariadb
-
-  portainer-data:
-    driver_opts:
-      o: bind
-      type: none
-      device: /home/${USER}/data/portainer
 
 networks:
   inception:
