@@ -45,10 +45,11 @@ sleep 10
 cat wp-config-sample.php > wp-config.php
 chown -R nobody:nobody /var/www/
 chmod -R +rwx /var/www/
-wp config set --path=/var/www --allow-root DB_NAME '$MYSQL_DATABASE'
-wp config set --path=/var/www --allow-root DB_USER '$MYSQL_USER'
-wp config set --path=/var/www --allow-root DB_PASSWORD '$MYSQL_PASSWORD'
-wp config set --path=/var/www --allow-root DB_HOST '$DB_HOST'
+echo "extension=tokenizer" >  /etc/php81/php.ini
+wp config set --path=/var/www --allow-root DB_NAME $MYSQL_DATABASE
+wp config set --path=/var/www --allow-root DB_USER $MYSQL_USER
+wp config set --path=/var/www --allow-root DB_PASSWORD $MYSQL_PASSWORD
+wp config set --path=/var/www --allow-root DB_HOST $DB_HOST
 wp core install --path=/var/www \
 --url=$WP_URL \
 --title=$WP_TITLE \

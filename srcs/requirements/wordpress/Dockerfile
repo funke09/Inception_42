@@ -11,7 +11,7 @@ FROM alpine:3.17
 #     WP_CACHE=true
 WORKDIR /var/www/
 RUN apk update && apk upgrade
-RUN apk add --no-cache php php-fpm php-phar php-mysqli php-json php-curl php-dom php-exif php-fileinfo php-mbstring php-openssl php-xml php-zip wget unzip curl
+RUN apk add --no-cache php php-fpm php-phar php-mysqli php-json php-curl php-dom php-exif php-fileinfo php-mbstring php-openssl php-xml php-zip wget unzip curl php-tokenizer
 RUN sed -i "s|listen = 127.0.0.1:9000|listen = 9000|g" /etc/php81/php-fpm.d/www.conf
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 RUN chmod +x wp-cli.phar
@@ -23,6 +23,4 @@ RUN mv wp-cli.phar /usr/local/bin/wp
 # COPY ./tools/wp-config.php .
 COPY ./tools/script.sh .
 RUN chmod +x ./script.sh
-# CMD ["./script.sh"]
-
-
+CMD ["./script.sh"]
