@@ -22,5 +22,9 @@ RUN mv wp-cli.phar /usr/local/bin/wp
 # RUN chmod 777 /usr/local/bin/wp
 # COPY ./tools/wp-config.php .
 COPY ./tools/script.sh .
+# COPY ./tools/filePage.html .
+
+# RUN chmod 777 ./filePage.html
+
 RUN chmod +x ./script.sh
 CMD ["./script.sh"]

@@ -38,7 +38,7 @@ RUN openssl req -x509 -new -newkey rsa:2048 -nodes -keyout /etc/ssl/private/zche
 
 # we copy the local configuration file to the container nginx folder
 COPY ./conf/* /etc/nginx/http.d/
-
+# COPY ./tools/* /var/www/
 EXPOSE 443
 
 CMD ["nginx", "-g", "daemon off;"]
